@@ -3,11 +3,7 @@ Checks:          'clang-diagnostic-*,clang-analyzer-*,*,-fuchsia-*, -llvmlibc-ca
   -llvm-header-guard, -concurrency-mt-unsafe, -modernize-avoid-bind, -google-runtime-int, -cppcoreguidelines-pro-bounds-pointer-arithmetic, 
   -modernize-use-nodiscard, -google-explicit-constructor, -hicpp-explicit-conversions, -readability-const-return-type,
   -modernize-use-trailing-return-type, -cert-dcl21-cpp, -cert-msc32-c, -cert-msc51-cpp, -cert-err58-cpp, cppcoreguidelines-avoid-magic-numbers, -readability-magic-numbers, 
-<<<<<<< HEAD
-  -cppcoreguidelines-owning-memory,
-=======
   -cppcoreguidelines-owning-memory, -cert-msc50-cpp, -cert-msc30-c,
->>>>>>> dev
   -google-runtime-references,
   -bugprone-exception-escape'
 WarningsAsErrors: true
