@@ -1,7 +1,6 @@
 #pragma once
-#include <algorithm>
+
 #include <cmath>
-#include <functional>
 #include <iostream>
 #include <iterator>
 #include <list>
@@ -9,23 +8,20 @@
 #include <utility>
 #include <vector>
 
-static const std::size_t SIZE = 5;
+const std::size_t SIZE = 5;
 
 template <class K, class V> class Iterator {
-    typename std::vector<std::list<std::pair<const K, V>>>::iterator ivect;
-    typename std::vector<std::list<std::pair<const K, V>>>::iterator ivect_end;
-    typename std::list<std::pair<const K, V>>::iterator ilist;
+    using hashmap_iterator =
+        typename std::vector<std::list<std::pair<const K, V>>>::iterator;
+    using list_iterator = typename std::list<std::pair<const K, V>>::iterator;
 
-  public:
-    using iterator_category = std::input_iterator_tag;
-    using value_type = std::pair<const K, V>;
-    using difference_type = std::ptrdiff_t;
-    using pointer = std::pair<const K, V> *;
-    using reference = std::pair<const K, V> &;
+    template <class Key, class Value, typename H> friend class HashMap;
 
-    Iterator<K, V>(
-        typename std::vector<std::list<std::pair<const K, V>>>::iterator iv,
-        typename std::vector<std::list<std::pair<const K, V>>>::iterator ivend)
+    hashmap_iterator ivect;
+    hashmap_iterator ivect_end;
+    list_iterator ilist;
+
+    Iterator<K, V>(hashmap_iterator iv, hashmap_iterator ivend)
         : ivect(iv), ivect_end(ivend) {
         if (ivect != ivect_end) {
             ilist = ivect->begin();
@@ -40,6 +36,14 @@ template <class K, class V> class Iterator {
             }
         }
     }
+
+  public:
+    using iterator_category = std::input_iterator_tag;
+    using value_type = std::pair<const K, V>;
+    using difference_type = std::ptrdiff_t;
+    using pointer = std::pair<const K, V> *;
+    using reference = std::pair<const K, V> &;
+
     Iterator &operator++() {
         if (ivect == ivect_end) {
         } else {
@@ -73,8 +77,9 @@ template <class K, class V> class Iterator {
     std::pair<const K, V> *operator->() const { return &*ilist; }
 };
 
-template <class K, class V> class HashMap {
+template <class K, class V, typename Hasher = std::hash<K>> class HashMap {
     std::vector<std::list<std::pair<const K, V>>> elements;
+    Hasher Hashfunc;
 
   public:
     // auto begin() -> decltype(Iterator<K, V>(elements.begin(),
@@ -94,9 +99,7 @@ template <class K, class V> class HashMap {
 
     HashMap() { elements.resize(SIZE); }
 
-    std::size_t get_hash(K key) {
-        return std::floor(std::hash<K>{}(key) % SIZE);
-    }
+    std::size_t get_hash(K key) { return std::floor(Hashfunc(key) % SIZE); }
 
     void set_value(K key, V value) {
         std::size_t hash = get_hash(key);
